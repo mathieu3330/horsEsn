@@ -1,0 +1,42 @@
+/* Reset de base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Corps de la page */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Liens */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Boutons */
+button {
+  cursor: pointer;
+}
+
+/* Conteneur principal (si utilisé globalement) */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Responsive padding pour petits écrans */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0.75rem;
+  }
+}
