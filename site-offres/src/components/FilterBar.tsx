@@ -15,7 +15,6 @@ import {
   InputLabel,
   Tooltip,
   useTheme,
-  useMediaQuery,
   Snackbar,
   Alert
 } from "@mui/material";
@@ -36,7 +35,6 @@ interface FilterBarProps {
 
 const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [search, setSearch] = useState("");
   const [ville, setVille] = useState("");
   const [contrat, setContrat] = useState("");

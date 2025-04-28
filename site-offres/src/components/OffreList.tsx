@@ -9,7 +9,6 @@ import {
   Button,
   Skeleton,
   useTheme,
-  Dialog,
   Snackbar,
   Alert
 } from "@mui/material";
@@ -87,7 +86,7 @@ const OffreList: React.FC = () => {
         searchParams.append('page', page.toString());
         searchParams.append('limit', '20');
         
-        const apiUrl = `/api/offres?${searchParams.toString()}`;
+        const apiUrl = `https://api-offres-515518215606.us-central1.run.app/offres?${searchParams.toString()}`;
         
         try {
           const response = await axios.get(apiUrl);
@@ -98,7 +97,7 @@ const OffreList: React.FC = () => {
             // Éviter les doublons en vérifiant les IDs
             const newOffres = response.data.offres || [];
             const existingIds = new Set(offres.map(o => o.id));
-            const uniqueNewOffres = newOffres.filter(o => !existingIds.has(o.id));
+            const uniqueNewOffres = newOffres.filter((o: Offre) => !existingIds.has(o.id));
             
             setOffres(prevOffres => [...prevOffres, ...uniqueNewOffres]);
           }
@@ -454,31 +453,20 @@ const OffreList: React.FC = () => {
                 );
               }
             })}
-            
-            {/* Indicateur de chargement pour l'infinite scroll */}
-            {loadingMore && (
-              <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-                <CircularProgress color="primary" />
-              </Box>
-            )}
-            
-            {/* Message quand toutes les offres sont chargées */}
-            {!hasMore && offres.length > 0 && (
-              <Box sx={{ textAlign: 'center', my: 4 }}>
-                <Typography variant="body1" color="text.secondary">
-                  Vous avez atteint la fin des résultats
-                </Typography>
-              </Box>
-            )}
           </Box>
         )}
       </Box>
 
-      {/* Modal de détail d'offre */}
+      {/* Indicateur de chargement pour "charger plus" */}
+      {loadingMore && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
+          <CircularProgress color="primary" />
+        </Box>
+      )}
+
+      {/* Détail de l'offre */}
       {selectedOffre && (
         <OffreDetail
-          open={detailOpen}
-          onClose={handleCloseDetail}
           id={selectedOffre.id}
           titre={selectedOffre.titre}
           contrat={selectedOffre.contrat}
@@ -486,11 +474,13 @@ const OffreList: React.FC = () => {
           description={selectedOffre.description}
           dateoffre={selectedOffre.dateoffre}
           logo={selectedOffre.logo}
-          lien={selectedOffre.lien || ""}
+          lien={selectedOffre.lien}
+          open={detailOpen}
+          onClose={handleCloseDetail}
         />
       )}
 
-      {/* Popup pour fonctionnalités non disponibles */}
+      {/* Snackbar pour les fonctionnalités non disponibles */}
       <Snackbar
         open={featureNotAvailableOpen}
         autoHideDuration={4000}

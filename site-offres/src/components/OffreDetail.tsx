@@ -1,13 +1,10 @@
 import React, { useState } from "react";
 import {
   Dialog,
-  DialogTitle,
   DialogContent,
-  DialogActions,
   Button,
   Typography,
   Box,
-  TextField,
   Grid,
   Divider,
   Chip,
@@ -24,8 +21,6 @@ import WorkIcon from "@mui/icons-material/Work";
 import BusinessIcon from "@mui/icons-material/Business";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import SendIcon from "@mui/icons-material/Send";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
 import ShareIcon from "@mui/icons-material/Share";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
@@ -44,7 +39,6 @@ interface OffreDetailProps {
 }
 
 const OffreDetail: React.FC<OffreDetailProps> = ({
-  id,
   titre = "Titre de l'offre",
   contrat = "CDI",
   ville = "Paris",
@@ -59,54 +53,6 @@ const OffreDetail: React.FC<OffreDetailProps> = ({
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-
-  // Déterminer la couleur du badge de contrat
-  const getContractColor = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "cdi":
-        return {
-          bg: "#ecfdf5",
-          color: "#059669",
-          borderColor: "#a7f3d0",
-        };
-      case "cdd":
-        return {
-          bg: "#eff6ff",
-          color: "#3b82f6",
-          borderColor: "#bfdbfe",
-        };
-      case "stage":
-        return {
-          bg: "#fef3c7",
-          color: "#d97706",
-          borderColor: "#fde68a",
-        };
-      case "alternance":
-        return {
-          bg: "#f3e8ff",
-          color: "#9333ea",
-          borderColor: "#e9d5ff",
-        };
-      default:
-        return {
-          bg: "#f1f5f9",
-          color: "#64748b",
-          borderColor: "#cbd5e1",
-        };
-    }
-  };
-
-  const contractStyle = getContractColor(contrat);
-
-  const handleSaveOffer = () => {
-    setSnackbarMessage("Offre sauvegardée avec succès");
-    setSnackbarOpen(true);
-  };
-
-  const handleShareOffer = () => {
-    setSnackbarMessage("Fonctionnalité de partage sera disponible prochainement");
-    setSnackbarOpen(true);
-  };
 
   const handleApply = () => {
     // Rediriger vers le site officiel de l'offre

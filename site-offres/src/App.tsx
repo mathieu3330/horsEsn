@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { ThemeProvider, CssBaseline, Typography, Box, Container, useMediaQuery } from "@mui/material";
+import { ThemeProvider, CssBaseline, Typography, Box } from "@mui/material";
 import theme from "./theme";
 import OffreList from "./components/OffreList";
 import Navbar from "./components/Navbar";
 
 const App: React.FC = () => {
-  const [scrolled, setScrolled] = useState(false);
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [, setScrolled] = useState(false);
 
   // Gestion du défilement pour les effets visuels
   useEffect(() => {

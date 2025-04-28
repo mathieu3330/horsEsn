@@ -1,9 +1,24 @@
 from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware # <-- Ajout de l'import
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
 
 app = FastAPI()
+
+# 🔹 Configuration CORS
+origins = [
+    "https://horsesn.fr",
+    # Ajoutez d'autres origines si nécessaire (ex: http://localhost:xxxx pour le dev) 
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+) # <-- Ajout du middleware CORS
 
 # 🔹 Connexion à Cloud SQL via Cloud Run
 DB_CONFIG = {
@@ -94,3 +109,4 @@ if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8080))
     uvicorn.run(app, host="0.0.0.0", port=port)
+

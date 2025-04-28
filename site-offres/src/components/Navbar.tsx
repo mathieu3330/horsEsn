@@ -11,7 +11,6 @@ import {
   MenuItem,
   useMediaQuery,
   useTheme,
-  Avatar,
   Badge,
   Slide,
   Snackbar,
