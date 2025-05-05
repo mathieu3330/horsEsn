@@ -54,7 +54,7 @@ def save_offer(titre, contrat, lieu, ville, lien, description, date_publication)
         cursor.execute("""
             INSERT INTO offres (
                 titre, contrat, lieu, ville, lien, description, dateoffre,
-                nomclient, logo, secteur, modetravail
+                nomclient, logo, secteur, teletravail
             )
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (

@@ -126,7 +126,7 @@ const Navbar: React.FC<NavbarProps> = ({ onFeatureNotAvailable }) => {
                     textShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
                   }}
                 >
-                  Offres d'emploi
+                  Offres d'emploi 
                 </Typography>
               </Box>
 

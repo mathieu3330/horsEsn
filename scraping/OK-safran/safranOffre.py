@@ -12,19 +12,19 @@ DB_CONFIG = {
     "password": "root"
 }
 
-BASE_URL = "https://groupecreditagricole.jobs/fr/nos-offres/contrats/577-1292-579/localisations/79/page/{}/"
-HEADERS = {
-    "User-Agent": "Mozilla/5.0"
-}
+BASE_URL = "https://www.safran-group.com/fr/offres?contracts%5B0%5D=39-alternance&contracts%5B1%5D=18-cdd&contracts%5B2%5D=9-cdi&contracts%5B3%5D=42-stage&page={}"
+HEADERS = {"User-Agent": "Mozilla/5.0"}
+
 
 def get_db_connection():
     return psycopg2.connect(**DB_CONFIG)
+
 
 def get_latest_offer_date():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute("SELECT MAX(dateoffre) FROM offres WHERE nomclient = 'credit_agricole'")
+        cursor.execute("SELECT MAX(dateoffre) FROM offres WHERE lien LIKE '%safran-group.com%'")
         result = cursor.fetchone()
         cursor.close()
         conn.close()
@@ -33,32 +33,33 @@ def get_latest_offer_date():
         print("❌ Erreur récupération date:", e)
         return datetime.min.date()
 
-def format_date(text):
+
+def format_date_safran(date_str):
     try:
-        date_text = text.replace("Mis à jour le", "").replace("Modifiée le", "").strip()
-        return datetime.strptime(date_text, "%d/%m/%Y").date()
-    except ValueError:
+        return datetime.strptime(date_str.strip(), "%d.%m.%Y").date()
+    except ValueError as e:
+        print(f"❌ Erreur format date: {e}")
         return None
 
-def get_offer_description(url):
+
+def get_offer_details(url):
     try:
         response = requests.get(url, headers=HEADERS)
         if response.status_code != 200:
             return "Description non disponible"
-        
-        soup = BeautifulSoup(response.text, "lxml")
-        description_section = soup.select_one("section.block.offer-content.text-container")
 
-        if description_section:
-            paragraphs = description_section.find_all(["p", "ul", "ol", "li", "strong"])
-            clean_text = "\n".join(p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True))
-            return clean_text if clean_text else "Description non disponible"
-        else:
-            return "Description non disponible"
-        
+        soup = BeautifulSoup(response.text, "lxml")
+        blocks = soup.select("div.c-details-offers-container__description--text")
+        paragraphs = []
+        for block in blocks:
+            paragraphs += block.find_all(["p", "ul", "li"])
+
+        description = "\n".join(p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True))
+        return description if description else "Description non disponible"
     except Exception as e:
         print(f"⚠ Erreur récupération description : {e}")
         return "Description non disponible"
+
 
 def save_offer(titre, contrat, lieu, ville, lien, description, date_publication, entreprise, logo):
     try:
@@ -72,7 +73,7 @@ def save_offer(titre, contrat, lieu, ville, lien, description, date_publication,
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
             titre, contrat, lieu, ville, lien, description, date_publication,
-            "credit_agricole", logo, "prive", "non précisé"
+            "safran", logo, "prive", "non précisé"
         ))
         conn.commit()
         cursor.close()
@@ -80,7 +81,9 @@ def save_offer(titre, contrat, lieu, ville, lien, description, date_publication,
     except Exception as e:
         print(f"⚠ Erreur lors de l'insertion : {e}")
 
-def scrape_credit_agricole():
+
+def scrape_safran():
+  
     page = 1
     last_date = get_latest_offer_date()
     stop_scraping = False
@@ -89,45 +92,52 @@ def scrape_credit_agricole():
         url = BASE_URL.format(page)
         print(f"📄 Scraping page {page} - URL: {url}")
         response = requests.get(url, headers=HEADERS)
+        print(f"✅ Statut HTTP test: {response.status_code}")
 
         if response.status_code != 200:
-            print("❌ Erreur HTTP. Fin du scraping.")
+            print("❌ Erreur HTTP toto. Fin. {response.status_code}")
             break
 
         soup = BeautifulSoup(response.text, "lxml")
-        offres = soup.find_all("article", class_="card offer detail")
+        offres = soup.select("div.c-offer-item__content")
 
         if not offres:
-            print("✅ Aucune offre trouvée. Fin du scraping.")
+            print("✅ Aucune offre trouvée. Fin.")
             break
 
         for offre in offres:
             try:
-                titre = offre.get("data-gtm-jobtitle", "Non précisé")
-                contrat = offre.get("data-gtm-jobcontract", "Non précisé")
-                ville = offre.get("data-gtm-jobcity", "Non précisé")
-                lieu = offre.get("data-gtm-jobcountry", "Non précisé")
-                entreprise = offre.get("data-gtm-jobentity", "Crédit Agricole")
-                date_pub = format_date(offre.get("data-gtm-jobpublishdate", ""))
+                titre_el = offre.select_one("a.c-offer-item__title")
+                titre = titre_el.get_text(strip=True) if titre_el else "Non précisé"
+                lien = titre_el["href"] if titre_el and titre_el.has_attr("href") else None
 
-                lien_el = offre.find("a")
-                lien = lien_el["href"] if lien_el and lien_el.has_attr("href") else None
-                if lien and lien.startswith("/"):
-                    lien = "https://groupecreditagricole.jobs" + lien
+                date_el = offre.select_one("span.c-offer-item__date")
+                date_pub = format_date_safran(date_el.text.strip()) if date_el else None
 
-                logo_el = offre.find("img")
-                logo = logo_el["src"] if logo_el and logo_el.has_attr("src") else ""
+                infos = offre.select(".c-offer-item__infos__item")
+                entreprise, ville, contrat = "", "", ""
+                for info in infos:
+                    text = info.get_text(strip=True)
+                    if "Safran" in text:
+                        entreprise = text
+                    elif "CDI" in text or "CDD" in text or "Alternance" in text or "Stage" in text:
+                        contrat = text
+                    elif "," in text and "France" in text:
+                        ville = text
+
+                lieu = "France"
+                logo = "https://www.safran-group.com/themes/custom/safran_theme/logo.svg"
 
                 if not lien or not date_pub:
                     continue
 
                 if date_pub <= last_date:
-                    print("⏹ Offre trop ancienne, arrêt immédiat.")
+                    print("⏹ Offre trop ancienne, arrêt.")
                     stop_scraping = True
                     break
 
                 time.sleep(1)
-                description = get_offer_description(lien)
+                description = get_offer_details(lien)
 
                 save_offer(titre, contrat, lieu, ville, lien, description, date_pub, entreprise, logo)
                 print(f"✅ Offre enregistrée : {titre} ({entreprise})")
@@ -137,5 +147,16 @@ def scrape_credit_agricole():
 
         page += 1
 
+
 if __name__ == "__main__":
-    scrape_credit_agricole()
+    # Test accessibilité
+    test_url = BASE_URL.format(1)
+    try:
+        r = requests.get(test_url, headers=HEADERS)
+        print(f"✅ Statut HTTP test: {r.status_code}")
+        print(r.text[:500])
+    except Exception as e:
+        print(f"❌ Erreur de connexion au site Safran : {e}")
+
+    # Lancer le scraping réel
+    scrape_safran()

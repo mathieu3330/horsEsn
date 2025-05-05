@@ -9,6 +9,7 @@ app = FastAPI()
 # 🔹 Configuration CORS
 origins = [
     "https://horsesn.fr",
+    "http://localhost:5173"
     # Ajoutez d'autres origines si nécessaire (ex: http://localhost:xxxx pour le dev) 
 ]
 
@@ -46,16 +47,22 @@ def get_offres(
     limit: int = Query(20, ge=1, le=100)
 ):
     """
-    Recupere les offres avec filtres + pagination (20 offres par defaut par page).
+    Recupere les offres avec filtres + pagination.
+    Affiche par dateoffre descendante puis random léger pour mélanger légèrement les offres.
     """
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    query = """
-        SELECT * FROM offres
-        WHERE 1=1
-    """
-    params = []
+    if search:
+        query = """
+            SELECT *, ts_rank_cd(to_tsvector('french', titre || ' ' || description), plainto_tsquery('french', %s)) AS rank
+            FROM offres
+            WHERE to_tsvector('french', titre || ' ' || description) @@ plainto_tsquery('french', %s)
+        """
+        params = [search, search]
+    else:
+        query = "SELECT * FROM offres WHERE 1=1"
+        params = []
 
     if contrat:
         query += " AND contrat = %s"
@@ -63,11 +70,11 @@ def get_offres(
     if ville:
         query += " AND ville = %s"
         params.append(ville)
-    if search:
-        query += " AND to_tsvector('french', titre || ' ' || description) @@ plainto_tsquery('french', %s)"
-        params.append(search)
 
-    query += " ORDER BY dateoffre DESC "
+    if search:
+        query += " ORDER BY rank DESC, dateoffre DESC"   # Si recherche : par score puis par dateoffre
+    else:
+        query += " ORDER BY dateoffre DESC, RANDOM()"     # Si pas de recherche : dateoffre récente + mélange léger
 
     # Pagination
     offset = (page - 1) * limit
