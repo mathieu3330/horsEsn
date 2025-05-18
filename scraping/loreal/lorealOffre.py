@@ -5,13 +5,12 @@ from datetime import datetime
 import time
 
 DB_CONFIG = {
-    "host": "/cloudsql/projetdbt-450020:us-central1:projetcdinterne",
+    "host": "/cloudsql/horsesn:us-central1:offres",
     "port": "5432",
     "dbname": "postgres",
     "user": "postgres",
     "password": "root"
 }
-
 BASE_URL = "https://careers.loreal.com/fr_FR/jobs/SearchJobsAJAX/?3_110_3=18022&3_33_3=137,134,133,135&jobOffset={}"
 HEADERS = {"User-Agent": "Mozilla/5.0"}
 

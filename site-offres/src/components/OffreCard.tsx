@@ -21,6 +21,7 @@ import SendIcon from "@mui/icons-material/Send";
 
 interface OffreProps {
   titre: string;
+  nomclient: string; // Ajout de la prop pour le nom du client
   contrat: string;
   ville: string;
   description: string;
@@ -30,6 +31,7 @@ interface OffreProps {
 
 const OffreCard: React.FC<OffreProps> = ({
   titre,
+  nomclient, // Récupération de la prop nomclient
   contrat,
   ville,
   description,
@@ -112,7 +114,7 @@ const OffreCard: React.FC<OffreProps> = ({
               position: "absolute",
               top: 0,
               right: 0,
-              backgroundColor: theme.palette.secondary.main,
+              backgroundColor: "#B8860B", // Couleur spécifique pour "Nouveau"
               color: "white",
               py: 0.5,
               px: 2,
@@ -157,7 +159,16 @@ const OffreCard: React.FC<OffreProps> = ({
                       mb: 0.5,
                     }}
                   >
-                    {titre}
+                     {nomclient} : {titre}
+                  </Typography>
+                  {/* Ajout du nom du client en gras */}
+                  <Typography
+                    variant="subtitle1"
+                    color="text.secondary"
+                    fontWeight="bold"
+                    sx={{ mb: 1.5 }}
+                  >
+                    
                   </Typography>
                 </Box>
 
@@ -249,7 +260,7 @@ const OffreCard: React.FC<OffreProps> = ({
                     variant="body2"
                     sx={{
                       fontWeight: 500,
-                      color: isNew ? theme.palette.secondary.main : "#334155",
+                      color: isNew ? theme.palette.secondary.main : "#64748b",
                     }}
                   >
                     il y a {joursDepuis} jours

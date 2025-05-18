@@ -1,16 +1,15 @@
 from fastapi import FastAPI, Query
-from fastapi.middleware.cors import CORSMiddleware # <-- Ajout de l'import
+from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
 
 app = FastAPI()
 
-# 🔹 Configuration CORS
+# 🔹 CORS
 origins = [
     "https://horsesn.fr",
     "http://localhost:5173"
-    # Ajoutez d'autres origines si nécessaire (ex: http://localhost:xxxx pour le dev) 
 ]
 
 app.add_middleware(
@@ -19,11 +18,11 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-) # <-- Ajout du middleware CORS
+)
 
-# 🔹 Connexion à Cloud SQL via Cloud Run
+# 🔹 Connexion PostgreSQL
 DB_CONFIG = {
-    "host": "/cloudsql/projetdbt-450020:us-central1:projetcdinterne",
+    "host": "/cloudsql/horsesn:us-central1:offres",
     "port": "5432",
     "dbname": "postgres",
     "user": "postgres",
@@ -31,7 +30,6 @@ DB_CONFIG = {
 }
 
 def get_db_connection():
-    """ etablit une connexion PostgreSQL """
     return psycopg2.connect(**DB_CONFIG, cursor_factory=RealDictCursor)
 
 @app.get("/")
@@ -42,44 +40,94 @@ def read_root():
 def get_offres(
     contrat: str = Query(None),
     ville: str = Query(None),
+    secteur: str = Query(None),
+    teletravail: str = Query(None),
     search: str = Query(None),
     page: int = Query(1, ge=1),
     limit: int = Query(20, ge=1, le=100)
 ):
-    """
-    Recupere les offres avec filtres + pagination.
-    Affiche par dateoffre descendante puis random léger pour mélanger légèrement les offres.
-    """
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    if search:
-        query = """
-            SELECT *, ts_rank_cd(to_tsvector('french', titre || ' ' || description), plainto_tsquery('french', %s)) AS rank
-            FROM offres
-            WHERE to_tsvector('french', titre || ' ' || description) @@ plainto_tsquery('french', %s)
-        """
-        params = [search, search]
-    else:
-        query = "SELECT * FROM offres WHERE 1=1"
-        params = []
+    params = []
+    where_clauses = ["1=1"]
 
+    if search:
+        phrase = f"%{search.strip()}%"
+        words = search.strip().split()
+
+        # Phrase exacte d'abord
+        priority_case = """
+            CASE
+                WHEN nomclient ILIKE %s THEN 4
+                WHEN titre ILIKE %s THEN 4
+        """
+        params += [phrase, phrase]
+
+        # Puis tous les mots (en AND)
+        for w in words:
+            priority_case += f"""
+                WHEN nomclient ILIKE %s THEN 3
+            """
+            params.append(f"%{w}%")
+        for w in words:
+            priority_case += f"""
+                WHEN titre ILIKE %s THEN 2
+            """
+            params.append(f"%{w}%")
+        for w in words:
+            priority_case += f"""
+                WHEN description ILIKE %s THEN 1
+            """
+            params.append(f"%{w}%")
+
+        priority_case += " ELSE 0 END AS priority"
+
+        # WHERE clause : tous les mots dans n'importe quel champ
+        search_conditions = []
+        for w in words:
+            w_like = f"%{w}%"
+            search_conditions += [
+                "nomclient ILIKE %s",
+                "titre ILIKE %s",
+                "description ILIKE %s"
+            ]
+            params += [w_like, w_like, w_like]
+
+        where_clause = " OR ".join(search_conditions)
+
+        query = f"""
+            SELECT *, {priority_case}
+            FROM offres
+            WHERE ({where_clause})
+        """
+    else:
+        query = "SELECT *, 0 AS priority FROM offres WHERE 1=1"
+
+    # Filtres additionnels
     if contrat:
         query += " AND contrat = %s"
         params.append(contrat)
     if ville:
         query += " AND ville = %s"
         params.append(ville)
+    if secteur:
+        query += " AND secteur = %s"
+        params.append(secteur)
+    if teletravail:
+        query += " AND teletravail = %s"
+        params.append(teletravail)
 
+    # Tri
     if search:
-        query += " ORDER BY rank DESC, dateoffre DESC"   # Si recherche : par score puis par dateoffre
+        query += " ORDER BY priority DESC, dateoffre DESC"
     else:
-        query += " ORDER BY dateoffre DESC, RANDOM()"     # Si pas de recherche : dateoffre récente + mélange léger
+        query += " ORDER BY dateoffre DESC, RANDOM()"
 
     # Pagination
     offset = (page - 1) * limit
     query += " LIMIT %s OFFSET %s"
-    params.extend([limit, offset])
+    params += [limit, offset]
 
     cursor.execute(query, tuple(params))
     offres = cursor.fetchall()
@@ -96,7 +144,6 @@ def get_offres(
 
 @app.get("/offres/{offre_id}")
 def get_offre(offre_id: int):
-    """ Recupere une offre specifique par son ID """
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -107,13 +154,10 @@ def get_offre(offre_id: int):
     conn.close()
 
     if not offre:
-        return {"message": "Offre non trouvee"}
-
+        return {"message": "Offre non trouvée"}
     return offre
 
-# 🔹 Pour execution locale (utile pour debug)
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8080))
     uvicorn.run(app, host="0.0.0.0", port=port)
-

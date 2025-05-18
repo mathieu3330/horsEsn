@@ -4,36 +4,36 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#2563eb', // Bleu plus moderne et vibrant
-      light: '#60a5fa',
-      dark: '#1e40af',
-      contrastText: '#ffffff',
+      main: '#0A2342', // Bleu marine
+      light: '#1B3A5F', // Lighter marine blue
+      dark: '#051424',  // Darker marine blue
+      contrastText: '#ffffff', // White text on dark blue is good
     },
     secondary: {
-      main: '#f97316', // Orange pour les accents et CTA
-      light: '#fdba74',
-      dark: '#c2410c',
-      contrastText: '#ffffff',
+      main: '#40E0D0', // Turquoise
+      light: '#7FFFD4', // Lighter turquoise (Aquamarine)
+      dark: '#00C4B3',  // Darker turquoise
+      contrastText: '#000000', // Black text on turquoise for better contrast
     },
     error: {
-      main: '#ef4444',
+      main: '#ef4444', // Standard red for error
     },
     warning: {
-      main: '#f59e0b',
+      main: '#f59e0b', // Amber for warning
     },
     info: {
-      main: '#3b82f6',
+      main: '#3b82f6', // Original info blue, might need review
     },
     success: {
-      main: '#10b981',
+      main: '#10b981', // Standard green for success
     },
     background: {
-      default: '#f8fafc',
-      paper: '#ffffff',
+      default: '#F0F2F5', // Gris clair
+      paper: '#ffffff',    // White for paper elements, good contrast with light grey bg
     },
     text: {
-      primary: '#1e293b',
-      secondary: '#64748b',
+      primary: '#1e293b', // Dark slate grey, acts as "gris anthracite"
+      secondary: '#64748b', // Lighter grey for secondary text
     },
   },
   typography: {

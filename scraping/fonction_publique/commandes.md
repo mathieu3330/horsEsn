@@ -2,7 +2,7 @@
 ### **2️⃣ Construire et Pousser l’Image Docker**
 Exécute ces commandes pour **construire et envoyer l’image** sur Google Cloud :
 ```sh
-gcloud builds submit --tag gcr.io/projetdbt-450020/scraper-job-public
+gcloud builds submit --tag gcr.io/horsesn/scraper-job-public
 
 ```
 
@@ -12,12 +12,12 @@ gcloud builds submit --tag gcr.io/projetdbt-450020/scraper-job-public
 Crée un **Cloud Run Job** qui se connecte à Cloud SQL :
 ```sh
 gcloud run jobs create scraper-job-public \
-    --image=gcr.io/projetdbt-450020/scraper-job-public \
+    --image=gcr.io/horsesn/scraper-job-public \
     --region=us-central1 \
     --task-timeout=1800s \
     --max-retries=3 \
-    --set-cloudsql-instances=projetdbt-450020:us-central1:projetcdinterne \
-    --set-env-vars DB_HOST="/cloudsql/projetdbt-450020:us-central1:projetcdinterne",DB_NAME="postgres",DB_USER="postgres",DB_PASSWORD="root"
+    --set-cloudsql-instances=horsesn:us-central1:offres \
+    --set-env-vars DB_HOST="/cloudsql/horsesn:us-central1:offres",DB_NAME="postgres",DB_USER="postgres",DB_PASSWORD="root"
 ```
 
 ---
@@ -35,8 +35,8 @@ Crée une **tâche automatique** pour exécuter le job chaque nuit à **2h du ma
 ```sh
 gcloud scheduler jobs create http scraper-schedule \
     --schedule="0 2 * * *" \
-    --uri="https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/projetdbt-450020/jobs/scraper-job:run" \
+    --uri="https://us-central1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/horsesn/jobs/scraper-job:run" \
     --http-method=POST \
-    --oauth-service-account-email=dbt-bigquery-service-account@projetdbt-450020.iam.gserviceaccount.com \
+    --oauth-service-account-email=dbt-bigquery-service-account@horsesn.iam.gserviceaccount.com \
     --location=us-central1
 ```

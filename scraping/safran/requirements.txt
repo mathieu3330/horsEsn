@@ -1,0 +1,4 @@
+selenium==4.3.0
+webdriver-manager==3.5.2
+flask==2.1.2  # Si vous souhaitez créer un service Flask dans Cloud Run pour exposer votre scraping en tant qu'API.
+psycopg2-binary==2.9.9

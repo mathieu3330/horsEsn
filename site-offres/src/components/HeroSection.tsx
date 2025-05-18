@@ -184,7 +184,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onFeatureNotAvailable }) => {
                       variant="h6"
                       sx={{ color: "white", fontWeight: 700, lineHeight: 1.2 }}
                     >
-                      +5000
+                      +15000
                     </Typography>
                     <Typography
                       variant="body2"

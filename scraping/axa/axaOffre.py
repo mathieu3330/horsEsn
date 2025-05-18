@@ -8,7 +8,7 @@ import json
 from http.client import RemoteDisconnected
 
 DB_CONFIG = {
-    "host": "/cloudsql/projetdbt-450020:us-central1:projetcdinterne",
+    "host": "/cloudsql/horsesn:us-central1:offres",
     "port": "5432",
     "dbname": "postgres",
     "user": "postgres",

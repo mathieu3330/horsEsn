@@ -23,6 +23,7 @@ import BusinessIcon from "@mui/icons-material/Business";
 interface Offre {
   id: number;
   titre: string;
+  nomclient: string;
   contrat: string;
   ville: string;
   description: string;
@@ -112,6 +113,7 @@ const OffreList: React.FC = () => {
             {
               id: 1,
               titre: "ALTERNANCE - MODELISATION DE LA DISPERSION DE POLLUANT EN CHAMP PROCHE",
+              nomclient: "EDF",
               contrat: "Alternance",
               ville: "Paris",
               description: "Pour réussir à intégrer les métiers de l'électricité et des énergies renouvelables, TotalEnergies a créé une nouvelle entité OneTech qui regroupe l'ensemble des...",
@@ -122,6 +124,7 @@ const OffreList: React.FC = () => {
             {
               id: 2,
               titre: "Assistant administratif et commercial (H/F)",
+              nomclient: "EDF",
               contrat: "CDI",
               ville: "Lyon",
               description: "TotalEnergies est une compagnie multi-énergies mondiale de production et de fourniture d'énergies : pétrole et biocarburants, gaz naturel et gaz verts, renouvel...",
@@ -132,6 +135,7 @@ const OffreList: React.FC = () => {
             {
               id: 3,
               titre: "LNG & Cryogenics Process Engineer M/F",
+              nomclient: "EDF",
               contrat: "CDI",
               ville: "Marseille",
               description: "Rejoignez une équipe dynamique dans le secteur de l'énergie pour travailler sur des projets innovants liés au GNL et aux processus cryogéniques...",
@@ -255,7 +259,7 @@ const OffreList: React.FC = () => {
               </Box>
               <Box>
                 <Typography variant="h4" fontWeight="bold" color="primary">
-                  +5000
+                  +15000
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Offres disponibles
@@ -426,6 +430,7 @@ const OffreList: React.FC = () => {
                   >
                     <OffreCard
                       titre={offre.titre}
+                      nomclient={offre.nomclient}
                       contrat={offre.contrat}
                       ville={offre.ville}
                       description={offre.description}
@@ -443,6 +448,7 @@ const OffreList: React.FC = () => {
                   >
                     <OffreCard
                       titre={offre.titre}
+                      nomclient={offre.nomclient}
                       contrat={offre.contrat}
                       ville={offre.ville}
                       description={offre.description}

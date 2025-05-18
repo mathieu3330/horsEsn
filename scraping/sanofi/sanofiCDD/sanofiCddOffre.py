@@ -6,15 +6,14 @@ from datetime import datetime
 
 # Configuration de la base de données
 DB_CONFIG = {
-    "host": "/cloudsql/projetdbt-450020:us-central1:projetcdinterne",
+    "host": "/cloudsql/horsesn:us-central1:offres",
     "port": "5432",
     "dbname": "postgres",
     "user": "postgres",
     "password": "root"
 }
-
 DB_CONFIG = {
-    "host": "/cloudsql/projetdbt-450020:us-central1:projetcdinterne",
+    "host": "/cloudsql/horsesn:us-central1:offres",
     "port": "5432",
     "dbname": "postgres",
     "user": "postgres",

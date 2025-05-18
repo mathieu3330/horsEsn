@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 # Configuration de la base de données
 DB_CONFIG = {
-    "host": "/cloudsql/projetdbt-450020:us-central1:projetcdinterne",
+    "host": "/cloudsql/horsesn:us-central1:offres",
     "port": "5432",
     "dbname": "postgres",
     "user": "postgres",
@@ -37,7 +37,7 @@ def get_latest_offer_date():
 def parse_html_content(raw_html):
     return BeautifulSoup(raw_html, "lxml").get_text(separator="\n", strip=True)
 
-def get_offer_details(url):
+def get_offer_details(url, titre):
     try:
         response = requests.get(url, headers=HEADERS)
         if response.status_code != 200:
@@ -45,15 +45,26 @@ def get_offer_details(url):
 
         soup = BeautifulSoup(response.text, "html.parser")
 
+        # Récupération de la description de l'offre
         description_section = soup.find("div", class_="dn-jobdetails__description-body")
         description = description_section.get_text(strip=True) if description_section else "Description non disponible"
 
-        # Informations supplémentaires
+        # Informations supplémentaires : Ville
         city = soup.find("h4", class_="job-card__city")
         city = city.get_text(strip=True) if city else "Non précisé"
 
-        contrat = soup.find("h4", class_="job-card__workFromHome")
-        contrat = contrat.get_text(strip=True) if contrat else "Non précisé"
+        # Chercher les mots-clés dans le titre : CDD, CDI, STAGE, ALTERNANCE
+        contrat = "Non précisé"
+        keywords = ["CDD", "CDI", "STAGE", "ALTERNANCE"]
+        for keyword in keywords:
+            if keyword.lower() in titre.lower():
+                contrat = keyword
+                break
+
+        # Si aucun mot-clé n'est trouvé, rechercher dans la balise `dn-jobdetails__positionType`
+        if contrat == "Non précisé":
+            contrat_section = soup.find("span", class_="dn-jobdetails__positionType")
+            contrat = contrat_section.get_text(strip=True) if contrat_section else "Non précisé"
 
         # Date de publication
         posted_timestamp = soup.find("article")
@@ -64,6 +75,15 @@ def get_offer_details(url):
             date_pub = datetime.min.date()
 
         return description, contrat, city, date_pub
+
+    except Exception as e:
+        print(f"⚠ Erreur récupération détails de l'offre : {e}")
+        return "Description non disponible", "Non précisé", "Non précisé", datetime.min.date()
+
+
+    except Exception as e:
+        print(f"⚠ Erreur récupération détails de l'offre : {e}")
+        return "Description non disponible", "Non précisé", "Non précisé", datetime.min.date()
 
     except Exception as e:
         print(f"⚠ Erreur récupération détails de l'offre : {e}")
@@ -118,7 +138,7 @@ def scrape_danone():
                 lien = job_item.find("a", class_="dn-jobdetails__-job-link")["href"] if job_item.find("a", class_="dn-jobdetails__-job-link") else None
                 lien = f"https://careers.danone.com{lien}" if lien else None
 
-                description, contrat, ville, date_posted = get_offer_details(lien)
+                description, contrat, ville, date_posted = get_offer_details(lien, titre)
 
                 if date_posted <= last_date:
                     print("⏹ Offre trop ancienne, arrêt.")

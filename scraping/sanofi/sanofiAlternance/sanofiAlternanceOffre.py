@@ -6,13 +6,12 @@ from datetime import datetime
 
 # Configuration de la base de données
 DB_CONFIG = {
-    "host": "/cloudsql/projetdbt-450020:us-central1:projetcdinterne",
+    "host": "/cloudsql/horsesn:us-central1:offres",
     "port": "5432",
     "dbname": "postgres",
     "user": "postgres",
     "password": "root"
 }
-
 # URL pour les offres en alternance
 BASE_URL = "https://jobs.sanofi.com/fr/search-jobs/results?ActiveFacetID=0&CurrentPage={}&RecordsPerPage=15&TotalContentResults=&Distance=50&RadiusUnitType=0&Keywords=&Location=&ShowRadius=False&IsPagination=True&CustomFacetName=&FacetTerm=&FacetType=0&FacetFilters%5B0%5D.ID=3017382&FacetFilters%5B0%5D.FacetType=2&FacetFilters%5B0%5D.Count=277&FacetFilters%5B0%5D.Display=France&FacetFilters%5B0%5D.IsApplied=true&FacetFilters%5B0%5D.FieldName=&FacetFilters%5B1%5D.ID=Apprentice&FacetFilters%5B1%5D.FacetType=5&FacetFilters%5B1%5D.Count=277&FacetFilters%5B1%5D.Display=Apprentice&FacetFilters%5B1%5D.IsApplied=true&FacetFilters%5B1%5D.FieldName=job_type&SearchResultsModuleName=Search+Results&SearchFiltersModuleName=Search+Filters&SortCriteria=0&SortDirection=0&SearchType=5&PostalCode=&ResultsType=0&fc=&fl=&fcf=&afc=&afl=&afcf=&TotalContentPages=NaN"
 

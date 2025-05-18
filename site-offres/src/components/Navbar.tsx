@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
-  Typography,
   Button,
   Box,
   Container,
@@ -18,9 +17,10 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import WorkIcon from "@mui/icons-material/Work";
 import PersonIcon from "@mui/icons-material/Person";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
+
+import logoImage from "../assets/logo_horsesn.png"; // Importer le nouveau logo HorsESN
 
 interface NavbarProps {
   onFeatureNotAvailable?: () => void;
@@ -87,8 +87,8 @@ const Navbar: React.FC<NavbarProps> = ({ onFeatureNotAvailable }) => {
           position="sticky"
           elevation={scrolled ? 4 : 0}
           sx={{
-            backgroundColor: scrolled ? theme.palette.primary.main : "rgba(37, 99, 235, 0.95)",
-            backdropFilter: "blur(8px)",
+            backgroundColor: theme.palette.primary.main, // Utiliser le bleu marine du thème
+            backdropFilter: scrolled ? "blur(8px)" : "none", // Appliquer le flou seulement si défilé
             transition: "all 0.3s ease",
           }}
         >
@@ -102,70 +102,13 @@ const Navbar: React.FC<NavbarProps> = ({ onFeatureNotAvailable }) => {
             >
               {/* Logo et titre */}
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    background: "rgba(255, 255, 255, 0.15)",
-                    borderRadius: "12px",
-                    p: 0.8,
-                    mr: 1.5,
-                  }}
-                >
-                  <WorkIcon sx={{ fontSize: 28, color: "#fff" }} />
-                </Box>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: 700,
-                    letterSpacing: "0.5px",
-                    background: "linear-gradient(90deg, #ffffff, #e0e7ff)",
-                    backgroundClip: "text",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    textShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-                  }}
-                >
-                  Offres d'emploi 
-                </Typography>
+                <img src={logoImage} alt="Logo OffresPro" style={{ height: "40px", marginRight: "10px" }} />
               </Box>
 
               {/* Navigation desktop */}
               {!isMobile && (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-                  <Button
-                    color="inherit"
-                    sx={{
-                      fontWeight: 600,
-                      opacity: 0.9,
-                      "&:hover": { opacity: 1, transform: "translateY(-2px)" },
-                    }}
-                    onClick={() => handleFeatureNotAvailable("Accueil")}
-                  >
-                    Accueil
-                  </Button>
-                  <Button
-                    color="inherit"
-                    sx={{
-                      fontWeight: 600,
-                      opacity: 0.9,
-                      "&:hover": { opacity: 1, transform: "translateY(-2px)" },
-                    }}
-                    onClick={() => handleFeatureNotAvailable("Entreprises")}
-                  >
-                    Entreprises
-                  </Button>
-                  <Button
-                    color="inherit"
-                    sx={{
-                      fontWeight: 600,
-                      opacity: 0.9,
-                      "&:hover": { opacity: 1, transform: "translateY(-2px)" },
-                    }}
-                    onClick={() => handleFeatureNotAvailable("Conseils")}
-                  >
-                    Conseils
-                  </Button>
+
                 </Box>
               )}
 

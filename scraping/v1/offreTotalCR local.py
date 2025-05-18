@@ -6,7 +6,7 @@ import time
 
 # Configuration de la base de données
 #DB_CONFIG = {
-#    "host": "/cloudsql/projetdbt-450020:us-central1:projectdinterne",
+#    "host": "/cloudsql/horsesn:us-central1:projectdinterne",
 #    "port": "5432",
 #    "dbname": "postgres",
 #    "user": "postgres",
