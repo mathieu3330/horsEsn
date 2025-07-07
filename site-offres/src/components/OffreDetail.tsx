@@ -191,53 +191,6 @@ const OffreDetail: React.FC<OffreDetailProps> = ({
                 {description}
               </Typography>
             </Box>
-
-            {/* Section Responsabilités */}
-            <Box sx={{ mb: 4 }}>
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                sx={{
-                  mb: 2,
-                  pb: 1,
-                  borderBottom: `2px solid ${theme.palette.primary.main}`,
-                  display: "inline-block",
-                }}
-              >
-                Responsabilités
-              </Typography>
-              <ul style={{ paddingLeft: "20px", color: "#334155" }}>
-                <li>Développer et maintenir des applications web modernes</li>
-                <li>Collaborer avec les équipes produit et design</li>
-                <li>Participer aux revues de code et aux sessions de pair programming</li>
-                <li>Optimiser les performances des applications</li>
-                <li>Rester à jour sur les nouvelles technologies et les meilleures pratiques</li>
-              </ul>
-            </Box>
-
-            {/* Section Compétences */}
-            <Box sx={{ mb: 4 }}>
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                sx={{
-                  mb: 2,
-                  pb: 1,
-                  borderBottom: `2px solid ${theme.palette.primary.main}`,
-                  display: "inline-block",
-                }}
-              >
-                Compétences requises
-              </Typography>
-              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-                <Chip label="React" sx={{ bgcolor: "#f1f5f9", fontWeight: 500 }} />
-                <Chip label="TypeScript" sx={{ bgcolor: "#f1f5f9", fontWeight: 500 }} />
-                <Chip label="Material-UI" sx={{ bgcolor: "#f1f5f9", fontWeight: 500 }} />
-                <Chip label="Node.js" sx={{ bgcolor: "#f1f5f9", fontWeight: 500 }} />
-                <Chip label="Git" sx={{ bgcolor: "#f1f5f9", fontWeight: 500 }} />
-                <Chip label="Agile/Scrum" sx={{ bgcolor: "#f1f5f9", fontWeight: 500 }} />
-              </Box>
-            </Box>
           </Grid>
 
           {/* Colonne latérale */}

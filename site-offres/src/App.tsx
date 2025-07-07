@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { ThemeProvider, CssBaseline, Typography, Box } from "@mui/material";
+import { Routes, Route, useLocation, Link } from "react-router-dom";
 import theme from "./theme";
 import OffreList from "./components/OffreList";
 import Navbar from "./components/Navbar";
+import Confidentialite from "./pages/Confidentialite";
+import Conditions from "./pages/Conditions";
+import Aide from "./pages/Aide";
+import Contact from "./pages/Contact";
 
 const App: React.FC = () => {
   const [, setScrolled] = useState(false);
+  const location = useLocation();
 
   // Gestion du défilement pour les effets visuels
   useEffect(() => {
@@ -24,6 +30,11 @@ const App: React.FC = () => {
     };
   }, []);
 
+  // Remonter en haut de la page lors des changements de route
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -36,6 +47,8 @@ const App: React.FC = () => {
           overflowX: "hidden",
           bgcolor: "#f8fafc",
           margin: "0 auto", // Centre le contenu
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         {/* Éléments décoratifs de fond */}
@@ -67,7 +80,7 @@ const App: React.FC = () => {
         {/* Navbar - pleine largeur */}
         <Navbar />
         
-        {/* Contenu principal */}
+        {/* Contenu principal avec routes */}
         <Box 
           sx={{ 
             width: "100%",
@@ -77,9 +90,16 @@ const App: React.FC = () => {
             pb: 8,
             position: "relative",
             zIndex: 1,
+            flex: 1,
           }}
         >
-          <OffreList />
+          <Routes>
+            <Route path="/" element={<OffreList />} />
+            <Route path="/confidentialite" element={<Confidentialite />} />
+            <Route path="/conditions" element={<Conditions />} />
+            <Route path="/aide" element={<Aide />} />
+            <Route path="/contact" element={<Contact />} />
+          </Routes>
         </Box>
 
         {/* Footer */}
@@ -111,7 +131,7 @@ const App: React.FC = () => {
               }}
             >
               <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                © {new Date().getFullYear()} Offres d'emploi - Tous droits réservés
+                © {new Date().getFullYear()} HorsESN.fr - Tous droits réservés
               </Typography>
               <Box
                 sx={{
@@ -120,16 +140,56 @@ const App: React.FC = () => {
                   flexWrap: "wrap",
                 }}
               >
-                <Typography variant="body2" sx={{ opacity: 0.8, "&:hover": { opacity: 1 } }}>
+                <Typography 
+                  variant="body2" 
+                  component={Link} 
+                  to="/confidentialite"
+                  sx={{ 
+                    opacity: 0.8, 
+                    "&:hover": { opacity: 1 },
+                    color: "inherit",
+                    textDecoration: "none"
+                  }}
+                >
                   Confidentialité
                 </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, "&:hover": { opacity: 1 } }}>
+                <Typography 
+                  variant="body2" 
+                  component={Link} 
+                  to="/conditions"
+                  sx={{ 
+                    opacity: 0.8, 
+                    "&:hover": { opacity: 1 },
+                    color: "inherit",
+                    textDecoration: "none"
+                  }}
+                >
                   Conditions d'utilisation
                 </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, "&:hover": { opacity: 1 } }}>
+                <Typography 
+                  variant="body2" 
+                  component={Link} 
+                  to="/aide"
+                  sx={{ 
+                    opacity: 0.8, 
+                    "&:hover": { opacity: 1 },
+                    color: "inherit",
+                    textDecoration: "none"
+                  }}
+                >
                   Aide
                 </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8, "&:hover": { opacity: 1 } }}>
+                <Typography 
+                  variant="body2" 
+                  component={Link} 
+                  to="/contact"
+                  sx={{ 
+                    opacity: 0.8, 
+                    "&:hover": { opacity: 1 },
+                    color: "inherit",
+                    textDecoration: "none"
+                  }}
+                >
                   Contact
                 </Typography>
               </Box>

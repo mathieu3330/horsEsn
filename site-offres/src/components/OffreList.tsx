@@ -35,15 +35,16 @@ interface Offre {
 const OffreList: React.FC = () => {
   const theme = useTheme();
   const [offres, setOffres] = useState<Offre[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [filters, setFilters] = useState({ search: "", ville: "", contrat: "" });
+  const [filters, setFilters] = useState({ search: "", ville: "", contrat: "", secteur: "", teletravail: "" });
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [showStats, setShowStats] = useState(false);
   const [selectedOffre, setSelectedOffre] = useState<Offre | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [featureNotAvailableOpen, setFeatureNotAvailableOpen] = useState(false);
+  const [filtersApplied, setFiltersApplied] = useState(false);
   
   // Référence pour éviter les appels API redondants pendant le défilement
   const isLoadingRef = useRef(false);
@@ -66,6 +67,13 @@ const OffreList: React.FC = () => {
 
   // Fonction pour récupérer les offres avec debounce
   useEffect(() => {
+    // Ne pas charger les offres si aucun filtre n'est appliqué
+    if (!filtersApplied) {
+      setOffres([]);
+      setLoading(false);
+      return;
+    }
+    
     const fetchOffres = async () => {
       try {
         // Éviter les appels redondants
@@ -84,10 +92,12 @@ const OffreList: React.FC = () => {
         if (filters.search) searchParams.append('search', filters.search);
         if (filters.contrat) searchParams.append('contrat', filters.contrat);
         if (filters.ville) searchParams.append('ville', filters.ville);
+        if (filters.secteur) searchParams.append('secteur', filters.secteur);
+        if (filters.teletravail) searchParams.append('teletravail', filters.teletravail);
         searchParams.append('page', page.toString());
         searchParams.append('limit', '20');
         
-        const apiUrl = `https://api-offres-515518215606.us-central1.run.app/offres?${searchParams.toString()}`;
+        const apiUrl = `https://api-offres-888357580442.us-central1.run.app/offres?${searchParams.toString()}`;
         
         try {
           const response = await axios.get(apiUrl);
@@ -110,28 +120,6 @@ const OffreList: React.FC = () => {
           console.error("Erreur API :", error);
           // Données de démonstration en cas d'erreur API
           const demoOffres = [
-            {
-              id: 1,
-              titre: "ALTERNANCE - MODELISATION DE LA DISPERSION DE POLLUANT EN CHAMP PROCHE",
-              nomclient: "EDF",
-              contrat: "Alternance",
-              ville: "Paris",
-              description: "Pour réussir à intégrer les métiers de l'électricité et des énergies renouvelables, TotalEnergies a créé une nouvelle entité OneTech qui regroupe l'ensemble des...",
-              dateoffre: "2025-03-03",
-              logo: "https://www.totalenergies.fr/typo3conf/ext/theme_totalenergies/Resources/Public/images/logo-totalenergies.svg",
-              lien: "https://www.totalenergies.fr/carrieres/nos-offres"
-            },
-            {
-              id: 2,
-              titre: "Assistant administratif et commercial (H/F)",
-              nomclient: "EDF",
-              contrat: "CDI",
-              ville: "Lyon",
-              description: "TotalEnergies est une compagnie multi-énergies mondiale de production et de fourniture d'énergies : pétrole et biocarburants, gaz naturel et gaz verts, renouvel...",
-              dateoffre: "2025-03-01",
-              logo: "https://www.totalenergies.fr/typo3conf/ext/theme_totalenergies/Resources/Public/images/logo-totalenergies.svg",
-              lien: "https://www.totalenergies.fr/carrieres/nos-offres"
-            },
             {
               id: 3,
               titre: "LNG & Cryogenics Process Engineer M/F",
@@ -184,7 +172,7 @@ const OffreList: React.FC = () => {
     };
 
     fetchOffres();
-  }, [filters, page]);
+  }, [filters, page, filtersApplied]);
 
   const handleOpenDetail = (offre: Offre) => {
     setSelectedOffre(offre);
@@ -204,9 +192,10 @@ const OffreList: React.FC = () => {
   };
 
   const resetFilters = () => {
-    setFilters({ search: "", ville: "", contrat: "" });
+    setFilters({ search: "", ville: "", contrat: "", secteur: "", teletravail: "" });
     setPage(1);
     setHasMore(true);
+    setFiltersApplied(false);
   };
 
   return (
@@ -216,15 +205,16 @@ const OffreList: React.FC = () => {
       
       {/* Barre de filtres */}
       <Box sx={{ width: "100%", maxWidth: "100%" }}>
-        <FilterBar onFilter={(search, ville, contrat) => {
-          setFilters({ search, ville, contrat });
+        <FilterBar onFilter={(search, ville, contrat, secteur, teletravail) => {
+          setFilters({ search, ville, contrat, secteur, teletravail });
           setPage(1); // Réinitialiser à la première page lors d'un changement de filtre
           setHasMore(true); // Réinitialiser hasMore
+          setFiltersApplied(true); // Marquer que les filtres ont été appliqués
         }} />
       </Box>
 
       {/* Statistiques - Suppression de l'effet Fade pour éviter la disparition */}
-      <Box sx={{ mb: 4, width: "100%", display: showStats ? 'block' : 'none' }}>
+      <Box sx={{ mb: 4, width: "100%", display: showStats && filtersApplied ? 'block' : 'none' }}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
             <Paper
@@ -259,7 +249,7 @@ const OffreList: React.FC = () => {
               </Box>
               <Box>
                 <Typography variant="h4" fontWeight="bold" color="primary">
-                  +15000
+                  +150000
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Offres disponibles
@@ -300,7 +290,7 @@ const OffreList: React.FC = () => {
               </Box>
               <Box>
                 <Typography variant="h4" fontWeight="bold" color="success.main">
-                  342
+                  899
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Entreprises partenaires
@@ -341,7 +331,7 @@ const OffreList: React.FC = () => {
               </Box>
               <Box>
                 <Typography variant="h4" fontWeight="bold" color="secondary.main">
-                  +124
+                  +2364
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Nouvelles offres cette semaine
@@ -377,91 +367,115 @@ const OffreList: React.FC = () => {
         <Typography variant="body1" color="text.secondary" sx={{ mt: 2 }}>
           {loading 
             ? "Recherche des meilleures opportunités pour vous..." 
-            : `+ ${offres.length} résultats trouvés pour votre recherche`}
+            : filtersApplied 
+              ? `Découvrez davantage d'offres en parcourant la page vers le bas`
+              : "Utilisez les filtres ci-dessus pour trouver des offres d'emploi"}
         </Typography>
       </Box>
 
+      {/* Message initial quand aucun filtre n'est appliqué */}
+      {!filtersApplied && (
+        <Paper
+          sx={{
+            p: 4,
+            borderRadius: "16px",
+            textAlign: "center",
+            bgcolor: "#f8fafc",
+            border: "1px dashed #cbd5e1",
+          }}
+        >
+          <Typography variant="h6" color="text.secondary" gutterBottom>
+            Bienvenue sur notre plateforme de recherche d'emploi
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Utilisez les filtres ci-dessus et cliquez sur "Trouver" pour découvrir les offres qui correspondent à vos critères
+          </Typography>
+        </Paper>
+      )}
+
       {/* Liste des offres - Suppression des effets Grow pour éviter la disparition progressive */}
-      <Box sx={{ width: "100%" }}>
-        {loading ? (
-          // Squelettes de chargement
-          Array.from(new Array(3)).map((_, index) => (
-            <Box key={index} sx={{ mb: 3 }}>
-              <Skeleton variant="rectangular" width="100%" height={200} sx={{ borderRadius: "16px" }} />
-            </Box>
-          ))
-        ) : offres.length === 0 ? (
-          // Message si aucune offre trouvée
-          <Paper
-            sx={{
-              p: 4,
-              borderRadius: "16px",
-              textAlign: "center",
-              bgcolor: "#f8fafc",
-              border: "1px dashed #cbd5e1",
-            }}
-          >
-            <Typography variant="h6" color="text.secondary" gutterBottom>
-              Aucune offre ne correspond à votre recherche
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Essayez de modifier vos critères de recherche ou consultez nos suggestions ci-dessous
-            </Typography>
-            <Button 
-              variant="contained" 
-              color="primary"
-              onClick={resetFilters}
+      {filtersApplied && (
+        <Box sx={{ width: "100%" }}>
+          {loading ? (
+            // Squelettes de chargement
+            Array.from(new Array(3)).map((_, index) => (
+              <Box key={index} sx={{ mb: 3 }}>
+                <Skeleton variant="rectangular" width="100%" height={200} sx={{ borderRadius: "16px" }} />
+              </Box>
+            ))
+          ) : offres.length === 0 ? (
+            // Message si aucune offre trouvée
+            <Paper
+              sx={{
+                p: 4,
+                borderRadius: "16px",
+                textAlign: "center",
+                bgcolor: "#f8fafc",
+                border: "1px dashed #cbd5e1",
+              }}
             >
-              Voir toutes les offres
-            </Button>
-          </Paper>
-        ) : (
-          // Liste des offres - sans animation Grow
-          <Box>
-            {offres.map((offre, index) => {
-              // Si c'est le dernier élément et qu'il y a potentiellement plus d'offres à charger
-              if (index === offres.length - 1 && hasMore) {
-                return (
-                  <Box 
-                    key={offre.id} 
-                    ref={lastOffreElementRef}
-                    onClick={() => handleOpenDetail(offre)} 
-                    sx={{ cursor: 'pointer', mb: 3 }}
-                  >
-                    <OffreCard
-                      titre={offre.titre}
-                      nomclient={offre.nomclient}
-                      contrat={offre.contrat}
-                      ville={offre.ville}
-                      description={offre.description}
-                      dateoffre={offre.dateoffre}
-                      logo={offre.logo}
-                    />
-                  </Box>
-                );
-              } else {
-                return (
-                  <Box 
-                    key={offre.id} 
-                    onClick={() => handleOpenDetail(offre)} 
-                    sx={{ cursor: 'pointer', mb: 3 }}
-                  >
-                    <OffreCard
-                      titre={offre.titre}
-                      nomclient={offre.nomclient}
-                      contrat={offre.contrat}
-                      ville={offre.ville}
-                      description={offre.description}
-                      dateoffre={offre.dateoffre}
-                      logo={offre.logo}
-                    />
-                  </Box>
-                );
-              }
-            })}
-          </Box>
-        )}
-      </Box>
+              <Typography variant="h6" color="text.secondary" gutterBottom>
+                Aucune offre ne correspond à votre recherche
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                Essayez de modifier vos critères de recherche ou consultez nos suggestions ci-dessous
+              </Typography>
+              <Button 
+                variant="contained" 
+                color="primary"
+                onClick={resetFilters}
+              >
+                Voir toutes les offres
+              </Button>
+            </Paper>
+          ) : (
+            // Liste des offres - sans animation Grow
+            <Box>
+              {offres.map((offre, index) => {
+                // Si c'est le dernier élément et qu'il y a potentiellement plus d'offres à charger
+                if (index === offres.length - 1 && hasMore) {
+                  return (
+                    <Box 
+                      key={offre.id} 
+                      ref={lastOffreElementRef}
+                      onClick={() => handleOpenDetail(offre)} 
+                      sx={{ cursor: 'pointer', mb: 3 }}
+                    >
+                      <OffreCard
+                        titre={offre.titre}
+                        nomclient={offre.nomclient}
+                        contrat={offre.contrat}
+                        ville={offre.ville}
+                        description={offre.description}
+                        dateoffre={offre.dateoffre}
+                        logo={offre.logo}
+                      />
+                    </Box>
+                  );
+                } else {
+                  return (
+                    <Box 
+                      key={offre.id} 
+                      onClick={() => handleOpenDetail(offre)} 
+                      sx={{ cursor: 'pointer', mb: 3 }}
+                    >
+                      <OffreCard
+                        titre={offre.titre}
+                        nomclient={offre.nomclient}
+                        contrat={offre.contrat}
+                        ville={offre.ville}
+                        description={offre.description}
+                        dateoffre={offre.dateoffre}
+                        logo={offre.logo}
+                      />
+                    </Box>
+                  );
+                }
+              })}
+            </Box>
+          )}
+        </Box>
+      )}
 
       {/* Indicateur de chargement pour "charger plus" */}
       {loadingMore && (

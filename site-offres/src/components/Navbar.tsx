@@ -13,14 +13,17 @@ import {
   Badge,
   Slide,
   Snackbar,
-  Alert
+  Alert,
 } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import PersonIcon from "@mui/icons-material/Person";
-import BookmarkIcon from "@mui/icons-material/Bookmark";
+import HomeIcon from "@mui/icons-material/Home";
+import HelpIcon from "@mui/icons-material/Help";
+import ContactSupportIcon from "@mui/icons-material/ContactSupport";
 
-import logoImage from "../assets/logo_horsesn.png"; // Importer le nouveau logo HorsESN
+import logoImage from "../assets/logo_horsesn.png"; // Importer le logo HorsESN
 
 interface NavbarProps {
   onFeatureNotAvailable?: () => void;
@@ -87,8 +90,8 @@ const Navbar: React.FC<NavbarProps> = ({ onFeatureNotAvailable }) => {
           position="sticky"
           elevation={scrolled ? 4 : 0}
           sx={{
-            backgroundColor: theme.palette.primary.main, // Utiliser le bleu marine du thème
-            backdropFilter: scrolled ? "blur(8px)" : "none", // Appliquer le flou seulement si défilé
+            backgroundColor: theme.palette.primary.main,
+            backdropFilter: scrolled ? "blur(8px)" : "none",
             transition: "all 0.3s ease",
           }}
         >
@@ -102,13 +105,41 @@ const Navbar: React.FC<NavbarProps> = ({ onFeatureNotAvailable }) => {
             >
               {/* Logo et titre */}
               <Box sx={{ display: "flex", alignItems: "center" }}>
-                <img src={logoImage} alt="Logo OffresPro" style={{ height: "40px", marginRight: "10px" }} />
+                <RouterLink to="/">
+                  <img src={logoImage} alt="Logo HorsESN" style={{ height: "40px", marginRight: "10px" }} />
+                </RouterLink>
               </Box>
 
               {/* Navigation desktop */}
               {!isMobile && (
                 <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-
+                  <Button
+                    component={RouterLink}
+                    to="/"
+                    color="inherit"
+                    startIcon={<HomeIcon />}
+                    sx={{ fontWeight: 500 }}
+                  >
+                    Accueil
+                  </Button>
+                  <Button
+                    component={RouterLink}
+                    to="/aide"
+                    color="inherit"
+                    startIcon={<HelpIcon />}
+                    sx={{ fontWeight: 500 }}
+                  >
+                    Aide
+                  </Button>
+                  <Button
+                    component={RouterLink}
+                    to="/contact"
+                    color="inherit"
+                    startIcon={<ContactSupportIcon />}
+                    sx={{ fontWeight: 500 }}
+                  >
+                    Contact
+                  </Button>
                 </Box>
               )}
 
@@ -116,18 +147,6 @@ const Navbar: React.FC<NavbarProps> = ({ onFeatureNotAvailable }) => {
               <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 {!isMobile && (
                   <>
-                    <IconButton
-                      color="inherit"
-                      sx={{
-                        backgroundColor: "rgba(255, 255, 255, 0.1)",
-                        "&:hover": {
-                          backgroundColor: "rgba(255, 255, 255, 0.2)",
-                        },
-                      }}
-                      onClick={() => handleFeatureNotAvailable("Favoris")}
-                    >
-                      <BookmarkIcon />
-                    </IconButton>
                     <IconButton
                       color="inherit"
                       sx={{
@@ -195,10 +214,9 @@ const Navbar: React.FC<NavbarProps> = ({ onFeatureNotAvailable }) => {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={() => handleFeatureNotAvailable("Accueil")}>Accueil</MenuItem>
-                  <MenuItem onClick={() => handleFeatureNotAvailable("Entreprises")}>Entreprises</MenuItem>
-                  <MenuItem onClick={() => handleFeatureNotAvailable("Conseils")}>Conseils</MenuItem>
-                  <MenuItem onClick={() => handleFeatureNotAvailable("Favoris")}>Favoris</MenuItem>
+                  <MenuItem component={RouterLink} to="/" onClick={handleClose}>Accueil</MenuItem>
+                  <MenuItem component={RouterLink} to="/aide" onClick={handleClose}>Aide</MenuItem>
+                  <MenuItem component={RouterLink} to="/contact" onClick={handleClose}>Contact</MenuItem>
                   <MenuItem onClick={() => handleFeatureNotAvailable("Notifications")}>Notifications</MenuItem>
                   <MenuItem onClick={() => handleFeatureNotAvailable("Connexion")}>Connexion</MenuItem>
                 </Menu>
@@ -207,6 +225,8 @@ const Navbar: React.FC<NavbarProps> = ({ onFeatureNotAvailable }) => {
           </Container>
         </AppBar>
       </Slide>
+
+
 
       {/* Snackbar pour les notifications de fonctionnalités non disponibles */}
       <Snackbar

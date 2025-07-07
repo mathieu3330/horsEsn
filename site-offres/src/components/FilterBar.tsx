@@ -21,16 +21,15 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import MicIcon from "@mui/icons-material/Mic";
-import TuneIcon from "@mui/icons-material/Tune";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import WorkIcon from "@mui/icons-material/Work";
-import EuroIcon from "@mui/icons-material/Euro";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import FilterAltIcon from "@mui/icons-material/FilterAlt";
+import BusinessIcon from "@mui/icons-material/Business";
+import LaptopIcon from "@mui/icons-material/Laptop";
+import ClearIcon from "@mui/icons-material/Clear";
 
 interface FilterBarProps {
-  onFilter: (search: string, ville: string, contrat: string) => void;
+  onFilter: (search: string, ville: string, contrat: string, secteur: string, teletravail: string) => void;
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
@@ -39,8 +38,8 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
   const [ville, setVille] = useState("");
   const [contrat, setContrat] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [salaryRange, setSalaryRange] = useState("");
-  const [experience, setExperience] = useState("");
+  const [secteur, setSecteur] = useState("");
+  const [teletravail, setTeletravail] = useState("");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
@@ -53,15 +52,15 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
     // Maintenir la position de défilement en haut de la page
     window.scrollTo({ top: 0, behavior: 'auto' });
     
-    onFilter(search, ville, contrat);
+    onFilter(search, ville, contrat, secteur, teletravail);
     
     // Mise à jour des filtres actifs
     const newFilters = [];
     if (search) newFilters.push(`Recherche: ${search}`);
     if (ville) newFilters.push(`Lieu: ${ville}`);
     if (contrat) newFilters.push(`Contrat: ${contrat}`);
-    if (salaryRange) newFilters.push(`Salaire: ${salaryRange}`);
-    if (experience) newFilters.push(`Expérience: ${experience}`);
+    if (secteur) newFilters.push(`Secteur: ${secteur}`);
+    if (teletravail) newFilters.push(`Télétravail: ${teletravail}`);
     
     setActiveFilters(newFilters);
     
@@ -76,8 +75,8 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
     if (filter.startsWith("Recherche:")) setSearch("");
     if (filter.startsWith("Lieu:")) setVille("");
     if (filter.startsWith("Contrat:")) setContrat("");
-    if (filter.startsWith("Salaire:")) setSalaryRange("");
-    if (filter.startsWith("Expérience:")) setExperience("");
+    if (filter.startsWith("Secteur:")) setSecteur("");
+    if (filter.startsWith("Télétravail:")) setTeletravail("");
     
     // Appliquer les filtres mis à jour sans faire défiler la page
     window.scrollTo({ top: 0, behavior: 'auto' });
@@ -85,12 +84,30 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
     onFilter(
       filter.startsWith("Recherche:") ? "" : search,
       filter.startsWith("Lieu:") ? "" : ville,
-      filter.startsWith("Contrat:") ? "" : contrat
+      filter.startsWith("Contrat:") ? "" : contrat,
+      filter.startsWith("Secteur:") ? "" : secteur,
+      filter.startsWith("Télétravail:") ? "" : teletravail
     );
   };
 
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
+  };
+
+  const handleClearAllFilters = () => {
+    // Réinitialiser tous les filtres
+    setSearch("");
+    setVille("");
+    setContrat("");
+    setSecteur("");
+    setTeletravail("");
+    setActiveFilters([]);
+    
+    // Appliquer les filtres vides
+    onFilter("", "", "", "", "");
+    
+    // Notification
+    setOpenSnackbar(true);
   };
 
   const inputStyle = {
@@ -238,11 +255,12 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
           
           <Button
             color="primary"
-            startIcon={<TuneIcon />}
+            startIcon={<ClearIcon />}
             variant="text"
+            onClick={handleClearAllFilters}
             sx={{ textTransform: "none", fontWeight: 500 }}
           >
-            Trier par pertinence
+            Supprimer les filtres
           </Button>
         </Box>
 
@@ -259,68 +277,46 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
               gap: 2,
             }}
           >
-            {/* Salaire */}
+            {/* Secteur */}
             <FormControl variant="outlined" sx={{ ...inputStyle, flex: 1 }}>
-              <InputLabel id="salary-label">Salaire</InputLabel>
+              <InputLabel id="secteur-label">Secteur</InputLabel>
               <Select
-                labelId="salary-label"
-                value={salaryRange}
-                onChange={(e) => setSalaryRange(e.target.value)}
-                label="Salaire"
+                labelId="secteur-label"
+                value={secteur}
+                onChange={(e) => setSecteur(e.target.value)}
+                label="Secteur"
                 startAdornment={
                   <InputAdornment position="start">
-                    <EuroIcon color="primary" />
+                    <BusinessIcon color="primary" />
                   </InputAdornment>
                 }
               >
-                <MenuItem value="">Tous les salaires</MenuItem>
-                <MenuItem value="20-30k">20 000 € - 30 000 €</MenuItem>
-                <MenuItem value="30-40k">30 000 € - 40 000 €</MenuItem>
-                <MenuItem value="40-50k">40 000 € - 50 000 €</MenuItem>
-                <MenuItem value="50-70k">50 000 € - 70 000 €</MenuItem>
-                <MenuItem value="70k+">Plus de 70 000 €</MenuItem>
+                <MenuItem value="">Tous les secteurs</MenuItem>
+                <MenuItem value="public">Public</MenuItem>
+                <MenuItem value="prive">Privé</MenuItem>
               </Select>
             </FormControl>
 
-            {/* Expérience */}
+            {/* Télétravail */}
             <FormControl variant="outlined" sx={{ ...inputStyle, flex: 1 }}>
-              <InputLabel id="experience-label">Expérience</InputLabel>
+              <InputLabel id="teletravail-label">Télétravail</InputLabel>
               <Select
-                labelId="experience-label"
-                value={experience}
-                onChange={(e) => setExperience(e.target.value)}
-                label="Expérience"
+                labelId="teletravail-label"
+                value={teletravail}
+                onChange={(e) => setTeletravail(e.target.value)}
+                label="Télétravail"
                 startAdornment={
                   <InputAdornment position="start">
-                    <AccessTimeIcon color="primary" />
+                    <LaptopIcon color="primary" />
                   </InputAdornment>
                 }
               >
-                <MenuItem value="">Toute expérience</MenuItem>
-                <MenuItem value="debutant">Débutant</MenuItem>
-                <MenuItem value="1-3">1 à 3 ans</MenuItem>
-                <MenuItem value="3-5">3 à 5 ans</MenuItem>
-                <MenuItem value="5-10">5 à 10 ans</MenuItem>
-                <MenuItem value="10+">Plus de 10 ans</MenuItem>
+                <MenuItem value="">Toutes options</MenuItem>
+                <MenuItem value="Oui">Oui</MenuItem>
+                <MenuItem value="Non">Non</MenuItem>
+                <MenuItem value="Non précisé">Non précisé</MenuItem>
               </Select>
             </FormControl>
-
-            {/* Autres filtres possibles */}
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={() => handleSearch()}
-              sx={{
-                height: 56,
-                borderRadius: "12px",
-                borderWidth: "1.5px",
-                fontWeight: 600,
-                flex: 1,
-              }}
-              startIcon={<FilterAltIcon />}
-            >
-              Appliquer les filtres
-            </Button>
           </Box>
         </Collapse>
 
@@ -357,7 +353,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
-          Filtres appliqués avec succès
+          {activeFilters.length > 0 ? "Filtres appliqués avec succès" : "Filtres supprimés avec succès"}
         </Alert>
       </Snackbar>
     </Paper>

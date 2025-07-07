@@ -87,7 +87,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onFeatureNotAvailable }) => {
                   lineHeight: 1.2,
                 }}
               >
-                Trouvez votre prochain emploi dans les meilleures entreprises en INTERNE
+                Rejoignez l'élite des entreprises françaises et internationales, des postes 100% internes et hors ESN.
               </Typography>
 
               <Typography
@@ -184,7 +184,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onFeatureNotAvailable }) => {
                       variant="h6"
                       sx={{ color: "white", fontWeight: 700, lineHeight: 1.2 }}
                     >
-                      +15000
+                      +150000
                     </Typography>
                     <Typography
                       variant="body2"
