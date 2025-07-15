@@ -8,32 +8,28 @@ import {
   useMediaQuery,
   Paper,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import StarIcon from "@mui/icons-material/Star";
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+
 
 interface HeroSectionProps {
   onFeatureNotAvailable?: () => void;
+  onExploreOffers?: () => void;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ({ onFeatureNotAvailable }) => {
+const HeroSection: React.FC<HeroSectionProps> = ( ) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-
-  const handleFeatureNotAvailable = () => {
-    if (onFeatureNotAvailable) {
-      onFeatureNotAvailable();
-    }
-  };
 
   return (
     <Box
       sx={{
         position: "relative",
         overflow: "hidden",
-        borderRadius: "24px",
-        mb: 6,
-        mt: 3,
+        borderRadius: "16px",
+        mb: 3,
+        mt: 2,
         background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
         boxShadow: "0 20px 40px rgba(37, 99, 235, 0.15)",
         width: "100%", // Assure que la section prend toute la largeur disponible
@@ -74,33 +70,33 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onFeatureNotAvailable }) => {
       >
         <Grid container spacing={4} alignItems="center">
           <Grid item xs={12} md={7}>
-            <Box sx={{ py: { xs: 6, md: 8 } }}>
+            <Box sx={{ py: { xs: 3, md: 4 } }}>
               <Typography
-                variant="h3"
+                variant="h4"
                 component="h1"
                 sx={{
                   fontWeight: 800,
                   color: "white",
-                  mb: 2,
+                  mb: 1.5,
                   textShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-                  fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+                  fontSize: { xs: "1.5rem", sm: "1.8rem", md: "2.2rem" },
                   lineHeight: 1.2,
                 }}
               >
-                Rejoignez l'élite des entreprises françaises et internationales, des postes 100% internes et hors ESN.
+                 En 1 clic, rejoignez l'élite des entreprises françaises et internationales, des postes 100% internes et hors ESN.
               </Typography>
 
               <Typography
-                variant="h6"
+                variant="body1"
                 sx={{
                   color: "rgba(255, 255, 255, 0.9)",
-                  mb: 4,
+                  mb: 2.5,
                   maxWidth: "600px",
-                  lineHeight: 1.5,
+                  lineHeight: 1.4,
+                  fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
                 }}
               >
-                Accédez aux offres d'emploi internes des grandes entreprises et
-                développez votre carrière avec des opportunités exclusives.
+                Des postes que vous ne verrez nulle part ailleurs.
               </Typography>
 
               <Box
@@ -108,129 +104,129 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onFeatureNotAvailable }) => {
                   display: "flex",
                   flexWrap: "wrap",
                   gap: 2,
-                  mb: 4,
+                  mb: 2.5,
                 }}
               >
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  size="large"
-                  startIcon={<SearchIcon />}
-                  sx={{
-                    py: 1.5,
-                    px: 3,
-                    fontWeight: 600,
-                    fontSize: "1rem",
-                    boxShadow: "0 8px 20px rgba(249, 115, 22, 0.3)",
-                    "&:hover": {
-                      transform: "translateY(-3px)",
-                      boxShadow: "0 12px 25px rgba(249, 115, 22, 0.4)",
-                    },
-                  }}
-                >
-                  Explorer les offres
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="large"
-                  onClick={handleFeatureNotAvailable}
-                  sx={{
-                    py: 1.5,
-                    px: 3,
-                    fontWeight: 600,
-                    fontSize: "1rem",
-                    color: "white",
-                    borderColor: "rgba(255, 255, 255, 0.5)",
-                    "&:hover": {
-                      borderColor: "white",
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
-                    },
-                  }}
-                >
-                  Créer une alerte
-                </Button>
+<Button
+  variant="contained"
+  color="secondary"
+  size="large"
+  startIcon={<LinkedInIcon />}
+  href="https://www.linkedin.com/company/horsesn-fr/posts/?feedView=all"
+  target="_blank"
+  rel="noopener noreferrer"
+  sx={{
+    py: 1.5,
+    px: 3,
+    fontWeight: 600,
+    fontSize: "1rem",
+    boxShadow: "0 8px 20px rgba(249, 115, 22, 0.3)",
+    "&:hover": {
+      transform: "translateY(-3px)",
+      boxShadow: "0 12px 25px rgba(249, 115, 22, 0.4)",
+    },
+  }}
+>
+  Suivez-nous sur LinkedIn
+</Button>
+
+        
               </Box>
+
+
 
               {/* Badges statistiques */}
-              <Box
-                sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 3,
-                }}
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      bgcolor: "rgba(255, 255, 255, 0.2)",
-                      borderRadius: "50%",
-                      width: 40,
-                      height: 40,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <TrendingUpIcon sx={{ color: "white" }} />
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      sx={{ color: "white", fontWeight: 700, lineHeight: 1.2 }}
-                    >
-                      +150000
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "rgba(255, 255, 255, 0.8)" }}
-                    >
-                      Offres disponibles
-                    </Typography>
-                  </Box>
-                </Box>
+{/* Badges statistiques */}
+{!isMobile && (
+  <Box
+    sx={{
+      display: "flex",
+      flexWrap: "nowrap",
+      gap: { xs: 2, sm: 3 },
+      mt: 1,
+    }}
+  >
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1,
+        minWidth: 160,
+      }}
+    >
+      <Box
+        sx={{
+          bgcolor: "rgba(255, 255, 255, 0.2)",
+          borderRadius: "50%",
+          width: 40,
+          height: 40,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <TrendingUpIcon sx={{ color: "white" }} />
+      </Box>
+      <Box>
+        <Typography
+          variant="h6"
+          sx={{ color: "white", fontWeight: 700, lineHeight: 1.2 }}
+        >
+          +150000
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{ color: "rgba(255, 255, 255, 0.8)" }}
+        >
+          Offres disponibles
+        </Typography>
+      </Box>
+    </Box>
 
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  <Box
-                    sx={{
-                      bgcolor: "rgba(255, 255, 255, 0.2)",
-                      borderRadius: "50%",
-                      width: 40,
-                      height: 40,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <StarIcon sx={{ color: "white" }} />
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      sx={{ color: "white", fontWeight: 700, lineHeight: 1.2 }}
-                    >
-                      4.8/5
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: "rgba(255, 255, 255, 0.8)" }}
-                    >
-                      Satisfaction candidats
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1,
+        minWidth: 160,
+      }}
+    >
+      <Box
+        sx={{
+          bgcolor: "rgba(255, 255, 255, 0.2)",
+          borderRadius: "50%",
+          width: 40,
+          height: 40,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <StarIcon sx={{ color: "white" }} />
+      </Box>
+      <Box>
+        <Typography
+          variant="h6"
+          sx={{ color: "white", fontWeight: 700, lineHeight: 1.2 }}
+        >
+          4.8/5
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{ color: "rgba(255, 255, 255, 0.8)" }}
+        >
+          Satisfaction candidats
+        </Typography>
+      </Box>
+    </Box>
+  </Box>
+)}
+
+
+
+
+
+
             </Box>
           </Grid>
 

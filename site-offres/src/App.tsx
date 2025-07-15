@@ -8,6 +8,7 @@ import Confidentialite from "./pages/Confidentialite";
 import Conditions from "./pages/Conditions";
 import Aide from "./pages/Aide";
 import Contact from "./pages/Contact";
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 const App: React.FC = () => {
   const [, setScrolled] = useState(false);
@@ -133,13 +134,24 @@ const App: React.FC = () => {
               <Typography variant="body2" sx={{ opacity: 0.8 }}>
                 © {new Date().getFullYear()} HorsESN.fr - Tous droits réservés
               </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  gap: { xs: 2, md: 4 },
-                  flexWrap: "wrap",
-                }}
-              >
+<Box
+        sx={{
+          display: "flex",
+          gap: { xs: 2, md: 4 },
+          flexWrap: "wrap",
+          alignItems: "center",
+        }}
+      >
+        {/* 🔗 LinkedIn logo and link */}
+        <Link
+          to="https://www.linkedin.com/company/horsesn-fr/posts/?feedView=all"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: "flex", alignItems: "center", color: "inherit", textDecoration: "none", opacity: 0.8 }}
+        >
+          <LinkedInIcon sx={{ mr: 0.5 }} />
+          LinkedIn
+        </Link>
                 <Typography 
                   variant="body2" 
                   component={Link} 

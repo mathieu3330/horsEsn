@@ -25,6 +25,31 @@ import ShareIcon from "@mui/icons-material/Share";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
 
+            
+const TITRES_SECTIONS = [
+  "Description du poste",
+  "Vos missions au quotidien",
+  "Profil souhaité",
+  "Concrètement, vous serez amené à",
+  "Ce que nous recherchons",
+  "Ce que vous apporterez",
+  "Ce que nous offrons",
+  "Les technologies utilisées",
+  "Description de l'offre",
+  "Avantages :",
+  "Le saviez vous ?",
+  "Plus précisément vous êtes en charge :",
+  "De missions de terrain  :",
+  "Vos missions :",
+  "Vos principales missions :",
+  "Vos missions",
+  "VOTRE PROFIL :",
+  "À propos de nous",
+  "Rejoignez-nous"
+
+];
+
+
 interface OffreDetailProps {
   id?: number;
   titre?: string;
@@ -187,9 +212,32 @@ const OffreDetail: React.FC<OffreDetailProps> = ({
               >
                 Description du poste
               </Typography>
-              <Typography variant="body1" sx={{ whiteSpace: "pre-line", color: "#334155" }}>
-                {description}
-              </Typography>
+            
+
+<Box sx={{ color: "#334155", fontSize: "16px", lineHeight: 1.7 }}>
+  {description.split("\n").map((line, idx) => {
+    const trimmed = line.trim();
+    const isTitle = TITRES_SECTIONS.some(title =>
+      trimmed.toLowerCase().startsWith(title.toLowerCase())
+    );
+
+    return (
+      <Typography
+        key={idx}
+        variant="body1"
+        sx={{
+          mb: trimmed === "" ? 2 : 1,
+          fontWeight: isTitle ? "bold" : "normal"
+        }}
+      >
+        {trimmed}
+      </Typography>
+    );
+  })}
+</Box>
+
+
+
             </Box>
           </Grid>
 

@@ -97,7 +97,7 @@ const OffreList: React.FC = () => {
         searchParams.append('page', page.toString());
         searchParams.append('limit', '20');
         
-        const apiUrl = `https://api-offres-888357580442.us-central1.run.app/offres?${searchParams.toString()}`;
+        const apiUrl = `https://api-offres-145837535580.us-central1.run.app/offres?${searchParams.toString()}`;
         
         try {
           const response = await axios.get(apiUrl);
@@ -201,7 +201,27 @@ const OffreList: React.FC = () => {
   return (
     <Box sx={{ width: "100%", maxWidth: "100%" }}>
       {/* Section Hero */}
-      <HeroSection onFeatureNotAvailable={handleFeatureNotAvailable} />
+      <HeroSection 
+        onFeatureNotAvailable={handleFeatureNotAvailable}
+        onExploreOffers={() => {
+          // Déclencher l'affichage de toutes les offres (recherche vide)
+          setFilters({ search: "", ville: "", contrat: "", secteur: "", teletravail: "" });
+          setPage(1);
+          setHasMore(true);
+          setFiltersApplied(true);
+          
+          // Scroll automatique vers les offres après un petit délai
+          setTimeout(() => {
+            const offresSection = document.querySelector('[data-section="offres"]');
+            if (offresSection) {
+              offresSection.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+              });
+            }
+          }, 300);
+        }}
+      />
       
       {/* Barre de filtres */}
       <Box sx={{ width: "100%", maxWidth: "100%" }}>
@@ -214,7 +234,7 @@ const OffreList: React.FC = () => {
       </Box>
 
       {/* Statistiques - Suppression de l'effet Fade pour éviter la disparition */}
-      <Box sx={{ mb: 4, width: "100%", display: showStats && filtersApplied ? 'block' : 'none' }}>
+      <Box sx={{ mb: 2, width: "100%", display: showStats && filtersApplied ? 'block' : 'none' }}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
             <Paper
@@ -343,7 +363,7 @@ const OffreList: React.FC = () => {
       </Box>
 
       {/* Titre de section */}
-      <Box sx={{ mb: 3, mt: 5, width: "100%" }}>
+      <Box sx={{ mb: 2, mt: 3, width: "100%" }} data-section="offres">
         <Typography 
           variant="h5" 
           fontWeight="bold"

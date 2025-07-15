@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://api-offres-888357580442.us-central1.run.app',
+        target: 'https://api-offres-145837535580.us-central1.run.app',
         changeOrigin: true,
         rewrite: (path)  => path.replace(/^\/api/, ''),
       },

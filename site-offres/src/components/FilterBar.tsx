@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  TextField,
   Button,
   MenuItem,
   Select,
@@ -9,24 +8,22 @@ import {
   Paper,
   Chip,
   Typography,
-  IconButton,
   Collapse,
   FormControl,
   InputLabel,
-  Tooltip,
   useTheme,
   Snackbar,
   Alert
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import MicIcon from "@mui/icons-material/Mic";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import WorkIcon from "@mui/icons-material/Work";
 import BusinessIcon from "@mui/icons-material/Business";
 import LaptopIcon from "@mui/icons-material/Laptop";
 import ClearIcon from "@mui/icons-material/Clear";
+import Autocomplete from "./Autocomplete";
+import { fetchEmploiSuggestions, fetchRegionSuggestions, fetchPopularSuggestions } from "../api";
 
 interface FilterBarProps {
   onFilter: (search: string, ville: string, contrat: string, secteur: string, teletravail: string) => void;
@@ -42,15 +39,29 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
   const [teletravail, setTeletravail] = useState("");
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [popularEmplois, setPopularEmplois] = useState<string[]>([]);
+  const [popularRegions, setPopularRegions] = useState<string[]>([]);
+
+  // Charger les suggestions populaires au chargement du composant
+  useEffect(() => {
+    const loadPopularSuggestions = async () => {
+      try {
+        const suggestions = await fetchPopularSuggestions();
+        setPopularEmplois(suggestions.emplois);
+        setPopularRegions(suggestions.regions);
+      } catch (error) {
+        console.error("Erreur lors du chargement des suggestions populaires:", error);
+      }
+    };
+
+    loadPopularSuggestions();
+  }, []);
 
   const handleSearch = (event?: React.FormEvent) => {
     // Empêcher le comportement par défaut du formulaire qui pourrait causer un défilement
     if (event) {
       event.preventDefault();
     }
-    
-    // Maintenir la position de défilement en haut de la page
-    window.scrollTo({ top: 0, behavior: 'auto' });
     
     onFilter(search, ville, contrat, secteur, teletravail);
     
@@ -66,6 +77,17 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
     
     // Afficher une notification de confirmation
     setOpenSnackbar(true);
+    
+    // Scroll automatique vers les offres après un petit délai pour laisser le temps aux filtres de s'appliquer
+    setTimeout(() => {
+      const offresSection = document.querySelector('[data-section="offres"]');
+      if (offresSection) {
+        offresSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }
+    }, 300);
   };
 
   const handleRemoveFilter = (filter: string) => {
@@ -140,7 +162,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
       sx={{
         width: "100%",
         borderRadius: "20px",
-        overflow: "hidden",
+        overflow: "visible",
         mb: 4,
         background: "linear-gradient(145deg, #ffffff, #f8fafc)",
         boxShadow: "0 10px 25px rgba(0,0,0,0.05)",
@@ -158,46 +180,32 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
               mb: 2,
             }}
           >
-            {/* Recherche */}
-            <TextField
-              variant="outlined"
-              placeholder="Je cherche un emploi..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              sx={{ ...inputStyle, flex: 2 }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon color="primary" />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Tooltip title="Recherche vocale">
-                      <IconButton color="primary" size="small">
-                        <MicIcon />
-                      </IconButton>
-                    </Tooltip>
-                  </InputAdornment>
-                ),
-              }}
-            />
+            {/* Recherche avec autocomplétion */}
+            <Box sx={{ flex: 2 }}>
+              <Autocomplete
+                placeholder="Je cherche un emploi..."
+                value={search}
+                onChange={setSearch}
+                onSelect={setSearch}
+                fetchSuggestions={fetchEmploiSuggestions}
+                icon="search"
+                showMic={true}
+                initialSuggestions={popularEmplois}
+              />
+            </Box>
 
-            {/* Localisation */}
-            <TextField
-              variant="outlined"
-              placeholder="Dans la région..."
-              value={ville}
-              onChange={(e) => setVille(e.target.value)}
-              sx={{ ...inputStyle, flex: 1 }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LocationOnIcon color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            {/* Localisation avec autocomplétion */}
+            <Box sx={{ flex: 1 }}>
+              <Autocomplete
+                placeholder="Dans la région..."
+                value={ville}
+                onChange={setVille}
+                onSelect={setVille}
+                fetchSuggestions={fetchRegionSuggestions}
+                icon="location"
+                initialSuggestions={popularRegions}
+              />
+            </Box>
 
             {/* Contrat */}
             <FormControl variant="outlined" sx={{ ...inputStyle, flex: 1 }}>
@@ -361,3 +369,4 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilter }) => {
 };
 
 export default FilterBar;
+
