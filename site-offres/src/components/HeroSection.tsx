@@ -8,19 +8,24 @@ import {
   useMediaQuery,
   Paper,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import StarIcon from "@mui/icons-material/Star";
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-
 
 interface HeroSectionProps {
   onFeatureNotAvailable?: () => void;
   onExploreOffers?: () => void;
 }
 
-const HeroSection: React.FC<HeroSectionProps> = ( ) => {
+const HeroSection: React.FC<HeroSectionProps> = ({onExploreOffers }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+
+  const handleExploreOffers = () => {
+    if (onExploreOffers) {
+      onExploreOffers();
+    }
+  };
 
   return (
     <Box
@@ -107,29 +112,26 @@ const HeroSection: React.FC<HeroSectionProps> = ( ) => {
                   mb: 2.5,
                 }}
               >
-<Button
-  variant="contained"
-  color="secondary"
-  size="large"
-  startIcon={<LinkedInIcon />}
-  href="https://www.linkedin.com/company/horsesn-fr/posts/?feedView=all"
-  target="_blank"
-  rel="noopener noreferrer"
-  sx={{
-    py: 1.5,
-    px: 3,
-    fontWeight: 600,
-    fontSize: "1rem",
-    boxShadow: "0 8px 20px rgba(249, 115, 22, 0.3)",
-    "&:hover": {
-      transform: "translateY(-3px)",
-      boxShadow: "0 12px 25px rgba(249, 115, 22, 0.4)",
-    },
-  }}
->
-  Suivez-nous sur LinkedIn
-</Button>
-
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  size="large"
+                  startIcon={<SearchIcon />}
+                  onClick={handleExploreOffers}
+                  sx={{
+                    py: 1.5,
+                    px: 3,
+                    fontWeight: 600,
+                    fontSize: "1rem",
+                    boxShadow: "0 8px 20px rgba(249, 115, 22, 0.3)",
+                    "&:hover": {
+                      transform: "translateY(-3px)",
+                      boxShadow: "0 12px 25px rgba(249, 115, 22, 0.4)",
+                    },
+                  }}
+                >
+                  Explorer les offres
+                </Button>
         
               </Box>
 
